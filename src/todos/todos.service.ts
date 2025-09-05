@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Model } from 'mongoose';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { Todo } from './entities/todo';
@@ -37,5 +41,15 @@ export class TodosService {
       description: todo?.description || '',
       date: todo.date,
     }));
+  }
+
+  async findOne(id: string): Promise<Todo | null> {
+    const todo = await this.todoModel.findById(id).exec();
+
+    if (!todo) {
+      throw new NotFoundException('Todo not found.');
+    }
+
+    return todo;
   }
 }
